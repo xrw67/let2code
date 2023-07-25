@@ -16,9 +16,9 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 file(GLOB srcs src/*.cpp)
-add_executable(tests ${srcs})
-target_link_libraries(tests GTest::gtest_main)
+add_executable(letcode_test ${srcs})
+target_link_libraries(letcode_test GTest::gtest_main)
 
 
 include(GoogleTest)
-gtest_discover_tests(tests)
+gtest_discover_tests(letcode_test)
