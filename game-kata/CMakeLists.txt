@@ -4,4 +4,4 @@ function(add_kata kata_name)
     add_test(kata-${kata_name} ${kata_name}_test)
 endfunction()
 
-add_kata(bowling)
+add_kata(bowling-game)
