@@ -1,3 +1,11 @@
-Learn for Letcode 
+# Let2Code
 
-https://leetcode.cn/
+
+My Programing Practices
+
+
+## References
+
+- https://leetcode.cn/
+- https://kata-log.rocks/
+- 
