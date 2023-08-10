@@ -28,43 +28,44 @@ public:
   int Score() {
     int score = 0;
     int frame_index = 0;
-
     for (int frame = 0; frame < 10; frame++) {
       if (IsStrike(frame_index)) {
         score += 10 + StrikeBonus(frame_index);
         frame_index++;
+      } else if (IsSpare(frame_index)) {
+        score += 10 + SpareBonus(frame_index);
+        frame_index += 2;
       } else {
-        if (IsSpare(frame_index)) {
-          score += 10 + SpareBonus(frame_index);
-          frame_index += 2;
-        } else {
-          score += rolls_[frame_index] + rolls_[frame_index + 1];
-          frame_index += 2;
-        }
+        score += SumOfBallsInFrame(frame_index);
+        frame_index += 2;
       }
     }
+
     return score;
   }
 
-  int StrikeBonus(int frame_index) {
-    return rolls_[frame_index + 1] + rolls_[frame_index + 2];
-  }
-  
-  int SpareBonus(int frame_index) { return rolls_[frame_index + 2]; }
-
+private:
   bool IsStrike(int frame_index) { return rolls_[frame_index] == 10; }
 
   bool IsSpare(int frame_index) {
     return rolls_[frame_index] + rolls_[frame_index + 1] == 10;
   }
 
-private:
+  int SumOfBallsInFrame(int frame_index) {
+    return rolls_[frame_index] + rolls_[frame_index + 1];
+  }
+
+  int SpareBonus(int frame_index) { return rolls_[frame_index + 2]; }
+
+  int StrikeBonus(int frame_index) {
+    return rolls_[frame_index + 1] + rolls_[frame_index + 2];
+  }
+
   std::array<int, 21> rolls_ = {};
   int current_roll_ = 0;
 };
 
-class BowlingGameTest : public ::testing::Test {
-protected:
+struct BowlingGameTest : public ::testing::Test {
   Game g;
 
   void RollMany(int n, int pins) {
@@ -72,7 +73,6 @@ protected:
       g.Roll(pins);
   }
 
-  void RollStrike() { g.Roll(10); }
   void RollSpare() {
     g.Roll(5);
     g.Roll(5);
@@ -97,9 +97,10 @@ TEST_F(BowlingGameTest, test_one_spare) {
 }
 
 TEST_F(BowlingGameTest, test_one_strike) {
-  RollStrike();
+  g.Roll(10);
   g.Roll(3);
   g.Roll(4);
+
   RollMany(16, 0);
   ASSERT_EQ(24, g.Score());
 }
@@ -108,4 +109,5 @@ TEST_F(BowlingGameTest, test_perfect_game) {
   RollMany(12, 10);
   ASSERT_EQ(300, g.Score());
 }
+
 } // namespace
