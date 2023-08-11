@@ -21,93 +21,97 @@
 
 namespace {
 
-class Game {
-public:
-  void Roll(int pins) { rolls_[current_roll_++] = pins; }
+struct Game {
+  int rolls[21] = {};
+  int current_roll = 0;
 
-  int Score() {
+  void roll(int pins) { rolls[current_roll++] = pins; }
+
+  int score() {
     int score = 0;
-    int frame_index = 0;
+    int frameIndex = 0;
+
     for (int frame = 0; frame < 10; frame++) {
-      if (IsStrike(frame_index)) {
-        score += 10 + StrikeBonus(frame_index);
-        frame_index++;
-      } else if (IsSpare(frame_index)) {
-        score += 10 + SpareBonus(frame_index);
-        frame_index += 2;
+      if (isStrike(frameIndex)) {
+        score += 10 + strikeBonus(frameIndex);
+        frameIndex++;
+      } else if (isSpare(frameIndex)) {
+        score += 10 + sapreBonus(frameIndex);
+        frameIndex += 2;
       } else {
-        score += SumOfBallsInFrame(frame_index);
-        frame_index += 2;
+        score += sumOfBallsInFrame(frameIndex);
+        frameIndex += 2;
       }
     }
-
     return score;
   }
 
-private:
-  bool IsStrike(int frame_index) { return rolls_[frame_index] == 10; }
-
-  bool IsSpare(int frame_index) {
-    return rolls_[frame_index] + rolls_[frame_index + 1] == 10;
+  bool isSpare(int frameIndex) {
+    return rolls[frameIndex] + rolls[frameIndex + 1] == 10;
   }
 
-  int SumOfBallsInFrame(int frame_index) {
-    return rolls_[frame_index] + rolls_[frame_index + 1];
+  bool isStrike(int frameIndex) { return rolls[frameIndex] == 10; }
+
+  int sumOfBallsInFrame(int frameIndex) {
+    return rolls[frameIndex] + rolls[frameIndex + 1];
   }
 
-  int SpareBonus(int frame_index) { return rolls_[frame_index + 2]; }
+  int sapreBonus(int frameIndex) { return rolls[frameIndex + 2]; }
 
-  int StrikeBonus(int frame_index) {
-    return rolls_[frame_index + 1] + rolls_[frame_index + 2];
+  int strikeBonus(int frameIndex) {
+    return rolls[frameIndex + 1] + rolls[frameIndex + 2];
   }
-
-  std::array<int, 21> rolls_ = {};
-  int current_roll_ = 0;
 };
 
 struct BowlingGameTest : public ::testing::Test {
   Game g;
 
-  void RollMany(int n, int pins) {
-    for (int i = 0; i < n; i++)
-      g.Roll(pins);
+  void rollMany(int n, int pins) {
+    for (int i = 0; i < n; i++) {
+      g.roll(pins);
+    }
   }
 
-  void RollSpare() {
-    g.Roll(5);
-    g.Roll(5);
+  void rollSpare() {
+    g.roll(5);
+    g.roll(5);
   }
+
+  void rollStrike() { g.roll(10); }
 };
 
-TEST_F(BowlingGameTest, test_gutter_game) {
-  RollMany(20, 0);
-  ASSERT_EQ(0, g.Score());
+TEST_F(BowlingGameTest, testGutterGame) {
+
+  rollMany(20, 0);
+
+  ASSERT_EQ(0, g.score());
 }
 
-TEST_F(BowlingGameTest, test_all_ones) {
-  RollMany(20, 1);
-  ASSERT_EQ(20, g.Score());
+TEST_F(BowlingGameTest, testAllOnes) {
+
+  rollMany(20, 1);
+
+  ASSERT_EQ(20, g.score());
 }
 
-TEST_F(BowlingGameTest, test_one_spare) {
-  RollSpare();
-  g.Roll(3);
-  RollMany(17, 0);
-  ASSERT_EQ(16, g.Score());
+TEST_F(BowlingGameTest, testOneSapre) {
+  rollSpare();
+  g.roll(3);
+  rollMany(17, 0);
+  ASSERT_EQ(16, g.score());
 }
 
-TEST_F(BowlingGameTest, test_one_strike) {
-  g.Roll(10);
-  g.Roll(3);
-  g.Roll(4);
-
-  RollMany(16, 0);
-  ASSERT_EQ(24, g.Score());
+TEST_F(BowlingGameTest, testOneStrike) {
+  rollStrike();
+  g.roll(3);
+  g.roll(4);
+  rollMany(16, 0);
+  ASSERT_EQ(24, g.score());
 }
 
-TEST_F(BowlingGameTest, test_perfect_game) {
-  RollMany(12, 10);
-  ASSERT_EQ(300, g.Score());
+TEST_F(BowlingGameTest, testPerfectGame) {
+  rollMany(12, 10);
+  ASSERT_EQ(300, g.score());
 }
 
 } // namespace
