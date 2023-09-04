@@ -6,10 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 enable_testing()
 include_directories(
-        googletest/googlemock/include
-        googletest/googletest/include
+        3rd
+        3rd/googletest/googlemock/include
+        3rd/googletest/googletest/include
 )
 
-add_subdirectory(googletest)
+add_subdirectory(3rd/googletest)
 add_subdirectory(letcode)
-add_subdirectory(game-kata)
+add_subdirectory(game_kata)
