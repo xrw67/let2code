@@ -1,5 +1,7 @@
 list(APPEND KATA_UNIT_TESTS
+    hello
     bowling_game
+    integer_to_binary
 )
 
 foreach(TEST ${KATA_UNIT_TESTS})
