@@ -3,6 +3,7 @@ list(APPEND KATA_UNIT_TESTS
     bowling_game
     integer_to_binary
     fizzbuzz
+    stack
 )
 
 foreach(TEST ${KATA_UNIT_TESTS})
